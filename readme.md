@@ -31,9 +31,9 @@ The ESP Controller App is a mobile application that allows you to control your E
 ### 1. Easy to use interface for controlling ESP devices
 ### 2. Connects to ESP devices using Wi-Fi
 ### 3. Supprts multiple ESP devices
-### 4. Sends commands to ESP devices via HTTP requests
+### 4. Sends commands to ESP devices via UDP
 ### 5. Displays sensor data from ESP devices in real-time
-### 6. Customizable interface with support for themes
+### 6. Customizable commands support for new devices
 <br>
   
   <div  align="center"> 
@@ -52,17 +52,15 @@ The ESP Controller App is a mobile application that allows you to control your E
 <div>
 1. Connect your ESP device to a Wi-Fi network and obtain its IP address.
  <br>
-2. Install the ESP Controller App on your Android device from the Google Play Store.
+2. Install the ESP Controller App.
  <br>
-3. Open the app and tap the "+" button to add a new device.
+3. Open the app and tap the "search" button to add a new device.
  <br>
-4. Enter the IP address of your ESP device and a name for the device.
+4. Tap "Modes" to select the modes.
  <br>
-5. Tap "Save" to save the device settings.
+5. Open the control interface for the device.
  <br>
-6. Tap the device name to open the control interface for the device.
- <br>
-7. Use the interface to send commands to the ESP device.
+6. Use the interface to send commands to the ESP device.
  <br>
 
 ### Steps to run it
