@@ -20,10 +20,6 @@ The ESP Controller App is a mobile application that allows you to control your E
  <img border="0" src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/app.png" >
 </div>
 <br>
-<b>INSIGHTS</b> is designed to help people who are unaware of government schemes including eligibility criteria, benefits, application process, and documents required. It provides a way for readers to save news and schemes, which helps to keep track of all eligible schemes which can benefit them. Schemes are also filtered so that users can get to know all eligible schemes which can benefit them. We have also used multiple sources like twitter, multiple media sources to ensure the accuracy of the data.
-    <br>
-<br>
-<br>
 
 
 
@@ -61,6 +57,15 @@ The ESP Controller App is a mobile application that allows you to control your E
 5. Open the control interface for the device.
  <br>
 6. Use the interface to send commands to the ESP device.
+ <br>
+ 
+ ## Troubleshooting
+
+If you are unable to discover the ESP devices on the network, you may need to check the following:
+
+- Ensure that the ESP devices are connected to the same Wi-Fi network as your mobile device.
+- Check that the ESP devices are powered on and connected to the network.
+- Verify that the broadcast IP address used in the app matches the network configuration of your Wi-Fi network.
  <br>
 
 ### Steps to run it
