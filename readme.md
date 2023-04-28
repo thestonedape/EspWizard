@@ -16,9 +16,6 @@
 
 # Context
 The ESP Controller App is a mobile application that allows you to control your ESP devices from your smartphone or tablet. With this app, you can easily connect to your ESP devices and send commands to them, such as turning on or off an LED, Motors, changing the color of an RGB light, or reading sensor data.
-<div align="center">
- <img border="0" src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/app.png" >
-</div>
 <br>
 
 
@@ -32,18 +29,6 @@ The ESP Controller App is a mobile application that allows you to control your E
 - Displays sensor data from ESP devices in real-time
 - Customizable commands support for new devices
 <br>
-  
-  <div  align="center"> 
-   
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/7.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/6.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/3.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/4.png">
-   <br>
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/5.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/1.png">
-       
-  </div>
   
  ## Getting Started
 
