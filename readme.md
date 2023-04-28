@@ -1,6 +1,6 @@
 <div align = "center">
 
-<h1 align ="center"><b>INSIGHTS </b></h1>
+<h1 align ="center"><b>ESP Wizard </b></h1>
  </div>
 
 
@@ -15,7 +15,7 @@
 <br>
 
 # Context
-Insights provide detailed information about the various government policies and schemes, including eligibility criteria, benefits, the application process, and the documents required.
+The ESP Controller App is a mobile application that allows you to control your ESP devices from your smartphone or tablet. With this app, you can easily connect to your ESP devices and send commands to them, such as turning on or off an LED, Motors, changing the color of an RGB light, or reading sensor data.
 <div align="center">
  <img border="0" src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/app.png" >
 </div>
@@ -28,25 +28,12 @@ Insights provide detailed information about the various government policies and 
 
 
 # Features
-### 1. Real-Time:
-<div >
-Provides you with real-time updates about any new policies or changes to existing scheme.
- </div>
-
-
-### 2.  Dedicated Section:
- <div>
-In addition, the app we also have a dedicated section for the latest tweets about government schemes.
-
-
-### 3. News Section:
- <div>
-The app also provides a news section that keeps you updated, which allows individuals to keep in track.
-
-### 4. All-in-One
- <div>
-Whether it's a new education policy, healthcare scheme or housing benefit, we've got you covered!
-  </div>
+### 1. Easy to use interface for controlling ESP devices
+### 2. Connects to ESP devices using Wi-Fi
+### 3. Supprts multiple ESP devices
+### 4. Sends commands to ESP devices via HTTP requests
+### 5. Displays sensor data from ESP devices in real-time
+### 6. Customizable interface with support for themes
 <br>
   
   <div  align="center"> 
@@ -98,7 +85,3 @@ To run the app on an emulator, open a new terminal window, navigate to the proje
 ```
   </div>
  <br>
-   
-### Explanatory Video
-
-Click [HERE](https://youtu.be/OQpG6NIUO8o) to check it out!
