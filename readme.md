@@ -23,13 +23,14 @@ The ESP Controller App is a mobile application that allows you to control your E
 
 
 
-# Features
-### 1. Easy to use interface for controlling ESP devices
-### 2. Connects to ESP devices using Wi-Fi
-### 3. Supprts multiple ESP devices
-### 4. Sends commands to ESP devices via UDP
-### 5. Displays sensor data from ESP devices in real-time
-### 6. Customizable commands support for new devices
+## Features
+
+- Easy to use interface for controlling ESP devices
+- Connects to ESP devices using Wi-Fi
+- Supprts multiple ESP devices
+- Sends commands to ESP devices via UDP
+- Displays sensor data from ESP devices in real-time
+- Customizable commands support for new devices
 <br>
   
   <div  align="center"> 
