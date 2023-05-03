@@ -8,13 +8,12 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const CarControlScreen = () => {
   const port = 12345;
-  const broadcastIP = '192.168.39.255';
+  const broadcastIP = useSelector((state) => state.IPaddress);
   const socket = useSelector((state) => state.socket);
 
   const [controller , setController] = useState();
 
   const ref = useRef(null);
-
 
   const onPress = useCallback(() => {
     const isActive = ref.current?.isActive();
