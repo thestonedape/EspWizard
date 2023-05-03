@@ -1,16 +1,12 @@
 import React from 'react';
 import {
     Text,
-    TouchableOpacity,
     View,
-    FlatList,
     StatusBar,
     StyleSheet,
     ToastAndroid,
     Image,
     TextInput,
-    ScrollView,
-    KeyboardAvoidingView,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
