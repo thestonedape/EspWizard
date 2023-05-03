@@ -1,6 +1,6 @@
 <div align = "center">
 
-<h1 align ="center"><b>INSIGHTS </b></h1>
+<h1 align ="center"><b>ESP Wizard </b></h1>
  </div>
 
 
@@ -15,51 +15,39 @@
 <br>
 
 # Context
-Insights provide detailed information about the various government policies and schemes, including eligibility criteria, benefits, the application process, and the documents required.
-<div align="center">
- <img border="0" src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/app.png" >
-</div>
-<br>
-<b>INSIGHTS</b> is designed to help people who are unaware of government schemes including eligibility criteria, benefits, application process, and documents required. It provides a way for readers to save news and schemes, which helps to keep track of all eligible schemes which can benefit them. Schemes are also filtered so that users can get to know all eligible schemes which can benefit them. We have also used multiple sources like twitter, multiple media sources to ensure the accuracy of the data.
-    <br>
-<br>
+The ESP Controller App is a mobile application that allows you to control your ESP devices from your smartphone or tablet. With this app, you can easily connect to your ESP devices and send commands to them, such as turning on or off an LED, Motors, changing the color of an RGB light, or reading sensor data.
 <br>
 
 
 
-# Features
-### 1. Real-Time:
-<div >
-Provides you with real-time updates about any new policies or changes to existing scheme.
- </div>
+## Features
 
-
-### 2.  Dedicated Section:
- <div>
-In addition, the app we also have a dedicated section for the latest tweets about government schemes.
-
-
-### 3. News Section:
- <div>
-The app also provides a news section that keeps you updated, which allows individuals to keep in track.
-
-### 4. All-in-One
- <div>
-Whether it's a new education policy, healthcare scheme or housing benefit, we've got you covered!
-  </div>
+- Easy to use interface for controlling ESP devices
+- Connects to ESP devices using Wi-Fi
+- Supprts multiple ESP devices
+- Sends commands to ESP devices via UDP
+- Displays sensor data from ESP devices in real-time
+- Customizable commands support for new devices
 <br>
   
-  <div  align="center"> 
-   
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/7.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/6.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/3.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/4.png">
-   <br>
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/5.png">
-  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/1.png">
-       
-  </div>
+ ## Getting Started
+
+- Connect your ESP device to a Wi-Fi network and obtain its IP address.
+- Install the ESP Controller App.
+- Open the app and tap the "search" button to add a new device.
+- Tap "Modes" to select the modes.
+- Open the control interface for the device.
+- Use the interface to send commands to the ESP device.
+ 
+ 
+ ## Troubleshooting
+
+If you are unable to discover the ESP devices on the network, you may need to check the following:
+
+- Ensure that the ESP devices are connected to the same Wi-Fi network as your mobile device.
+- Check that the ESP devices are powered on and connected to the network.
+- Verify that the broadcast IP address used in the app matches the network configuration of your Wi-Fi network.
+ <br>
 
 ### Steps to run it
   <div>
@@ -98,7 +86,3 @@ To run the app on an emulator, open a new terminal window, navigate to the proje
 ```
   </div>
  <br>
-   
-### Explanatory Video
-
-Click [HERE](https://youtu.be/OQpG6NIUO8o) to check it out!
