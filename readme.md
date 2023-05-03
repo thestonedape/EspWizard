@@ -12,6 +12,17 @@
 </div>
 
 <br>
+<div  align="center"> 
+   
+  <img border="0" height='350' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/4.png">
+  <img border="0" height='350' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/3.png">
+  <img border="0" height='350' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/2.png">
+  <img border="0" height='350' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/1.png">
+   <br>
+  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/5.png">
+  <img border="0" height='350' src="https://github.com/thestonedape/testingfinalInsights/blob/master/assets/images/1.png">
+       
+  </div>
 <br>
 
 # Context
