@@ -1,18 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
 import TestScreen from './screens/TestScreen'
 import ControlScreen from './screens/ControlScreen'
-
+import SplashScreen from './screens/SplashScreen'
+import SearchScreen from './screens/SearchScreen'
 import { DarkTheme, NavigationContainer, useTheme } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { TransitionPresets, createStackNavigator } from '@react-navigation/stack'
 
 import store from './redux/store/store'
 import { Provider } from 'react-redux'
 
 
+
 const Stack = createStackNavigator()
 
 const App = () => {
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 3200);
+    return () => {
+      clearTimeout();
+    }; 
+  }, []);
+
+  
   return (
     <Provider store={store}>
     <NavigationContainer
@@ -21,11 +36,17 @@ const App = () => {
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
-        }}
-        
-      >
-        <Stack.Screen name="Test" component={TestScreen} />
-        <Stack.Screen name="Control" component={ControlScreen} />
+          ...TransitionPresets.SlideFromRightIOS,
+        }}>
+        {loading ? (
+          <Stack.Screen name="Splash" component={SplashScreen} />
+        ) : (
+          <>
+            <Stack.Screen name="Test" component={TestScreen} />
+            <Stack.Screen name="Search" component={SearchScreen} />
+            <Stack.Screen name="Control" component={ControlScreen} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
     </Provider>

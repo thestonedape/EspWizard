@@ -195,17 +195,16 @@ const CarControlScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#000000',
   },
   header: {
     padding: 20,
-    backgroundColor: '#1e1e1e',
-    borderBottomWidth: 1,
-    borderBottomColor: '#2a2a2a',
+    backgroundColor: '#000000',
+    alignItems: 'center',
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily:'NeueMetana-Bold',
     color: '#f0f0f0',
   },
   formContainer: {
@@ -222,8 +221,8 @@ const styles = StyleSheet.create({
     marginTop: "50%"
   },
   controlContainer: {
-    backgroundColor: '#2a2a2a',
-    borderRadius: 20,
+    backgroundColor: '#101010',
+    borderRadius: 15,
     padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -235,6 +234,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 24,
+    fontFamily:'Cirka-Variable',
     textAlign: 'center',
     marginBottom: 20,
     color: '#eeeeee',
@@ -301,15 +301,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     bottom: 0,
-    backgroundColor: '#2a2a2a',
+    backgroundColor: '#5dbe74',
     padding: 10,
     borderRadius: 10,
     alignSelf: 'center',
   },
   fabText: {
-    color: '#FFFFFF',
+    color: '#000000',
     textAlign: 'center',
-    fontSize: 17,
+    fontSize: 20,
+    fontFamily:'Cirka-Bold',
   },
     bottomSheet: {
       backgroundColor: "#1F2124",
@@ -331,6 +332,7 @@ const styles = StyleSheet.create({
       color: "#FFFFFF",
       fontSize: 16,
       marginTop: 10,
+      fontFamily:'Cirka-Variable',
     },
     lightContainer: {
       backgroundColor: '#3a3a3a',

@@ -36,7 +36,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
@@ -51,5 +51,18 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Gilroy-ExtraBold.otf</string>
+		<string>Gilroy-Light.otf</string>
+		<string>druk-wide-bold.ttf</string>
+		<string>MontserratAlt1-ExtraLight.ttf</string>
+		<string>MontserratAlt1-Light.ttf</string>
+		<string>MontserratAlt1-Thin.ttf</string>
+		<string>Cirka-Bold.otf</string>
+		<string>Cirka-Light.otf</string>
+		<string>Cirka-Variable.ttf</string>
+		<string>NeueMetana-Bold.otf</string>
+	</array>
 </dict>
 </plist>
