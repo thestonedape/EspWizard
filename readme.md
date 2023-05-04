@@ -1,6 +1,7 @@
 <div align = "center">
 
 <h1 align ="center"><b>ESP Wizard </b></h1>
+<img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/download.jpg">
  </div>
 
 
