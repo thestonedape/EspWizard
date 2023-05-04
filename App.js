@@ -4,13 +4,11 @@ import TestScreen from './screens/TestScreen'
 import ControlScreen from './screens/ControlScreen'
 import SplashScreen from './screens/SplashScreen'
 import SearchScreen from './screens/SearchScreen'
-import { DarkTheme, NavigationContainer, useTheme } from '@react-navigation/native'
+import { DarkTheme, NavigationContainer, } from '@react-navigation/native'
 import { TransitionPresets, createStackNavigator } from '@react-navigation/stack'
 
 import store from './redux/store/store'
 import { Provider } from 'react-redux'
-
-
 
 const Stack = createStackNavigator()
 
@@ -54,5 +52,3 @@ const App = () => {
 }
 
 export default App
-
-
