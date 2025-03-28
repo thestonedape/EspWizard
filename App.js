@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react';
 
-import TestScreen from './screens/TestScreen'
-import ControlScreen from './screens/ControlScreen'
-import SplashScreen from './screens/SplashScreen'
-import LoadingScreen from './screens/SearchScreen'
-import { DarkTheme, NavigationContainer, } from '@react-navigation/native'
-import { TransitionPresets, createStackNavigator } from '@react-navigation/stack'
-
-import store from './redux/store/store'
-import { Provider } from 'react-redux'
-import FanControlScreen from './screens/FanControlScreen'
-
-const Stack = createStackNavigator()
+import TestScreen from './screens/TestScreen';
+import ControlScreen from './screens/ControlScreen';
+import SplashScreen from './screens/SplashScreen';
+import LoadingScreen from './screens/SearchScreen';
+import {DarkTheme, NavigationContainer} from '@react-navigation/native';
+import {TransitionPresets, createStackNavigator} from '@react-navigation/stack';
+import store from './redux/store/store';
+import {Provider} from 'react-redux';
+import FanControlScreen from './screens/FanControlScreen';
+const Stack = createStackNavigator();
 
 const App = () => {
-
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     setTimeout(() => {
       setLoading(false);
@@ -25,13 +21,9 @@ const App = () => {
       clearTimeout();
     };
   }, []);
-
-
   return (
     <Provider store={store}>
-      <NavigationContainer
-        theme={DarkTheme}
-      >
+      <NavigationContainer theme={DarkTheme}>
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
@@ -42,7 +34,10 @@ const App = () => {
           ) : (
             <>
               <Stack.Screen name="NewDevice" component={TestScreen} />
-              <Stack.Screen name="FanControlScreen" component={FanControlScreen} />
+              <Stack.Screen
+                name="FanControlScreen"
+                component={FanControlScreen}
+              />
               <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
               <Stack.Screen name="Control" component={ControlScreen} />
             </>
@@ -50,7 +45,7 @@ const App = () => {
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
-  )
-}
+  );
+};
 
-export default App
+export default App;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -10,25 +10,27 @@ import {
   ToastAndroid,
   Dimensions,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import Lottie from 'lottie-react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ThemedButton } from 'react-native-really-awesome-button';
+import {useFocusEffect} from '@react-navigation/native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {ThemedButton} from 'react-native-really-awesome-button';
 
-export default function LoadingScreen({ navigation }) {
+export default function LoadingScreen({navigation}) {
   const dispatch = useDispatch();
-  const server = useSelector((state) => state.server);
-  const connectedDevices = useSelector((state) => state.connectedDevices || []);
-  const sockets = useSelector((state) => state.sockets || []);
+  const server = useSelector(state => state.server);
+  const connectedDevices = useSelector(state => state.connectedDevices || []);
+  const sockets = useSelector(state => state.sockets || []);
   const isMounted = useRef(true);
   const isStopping = useRef(false);
   const hasNavigated = useRef(false);
   const navigationTimeout = useRef(null);
-  const [serverAddress, setServerAddress] = useState({ ip: 'Unknown', port: 'Unknown' });
+  const [serverAddress, setServerAddress] = useState({
+    ip: 'Unknown',
+    port: 'Unknown',
+  });
 
-  // Safely fetch server address
   useEffect(() => {
     if (server) {
       try {
@@ -39,10 +41,10 @@ export default function LoadingScreen({ navigation }) {
         });
       } catch (error) {
         console.error('Error getting server address:', error);
-        setServerAddress({ ip: 'Unknown', port: 'Unknown' });
+        setServerAddress({ip: 'Unknown', port: 'Unknown'});
       }
     } else {
-      setServerAddress({ ip: 'Server stopped', port: 'Server stopped' });
+      setServerAddress({ip: 'Server stopped', port: 'Server stopped'});
     }
   }, [server]);
 
@@ -50,14 +52,12 @@ export default function LoadingScreen({ navigation }) {
     isMounted.current = true;
     return () => {
       isMounted.current = false;
-      if (server && !isStopping.current) {
-        stopServer();
-      }
       if (navigationTimeout.current) {
         clearTimeout(navigationTimeout.current);
       }
+      console.log('LoadingScreen unmounted, keeping server alive');
     };
-  }, [server]);
+  }, []);
 
   const stopServer = async () => {
     if (isStopping.current) {
@@ -72,13 +72,18 @@ export default function LoadingScreen({ navigation }) {
       console.log('Sockets:', sockets.length);
 
       if (server) {
-        sockets.forEach((socket) => {
-          console.log(`Destroying socket: ${socket.remoteAddress}:${socket.remotePort}`);
+        sockets.forEach(socket => {
+          console.log(
+            `Destroying socket: ${socket.remoteAddress}:${socket.remotePort}`,
+          );
           try {
             socket.removeAllListeners();
             socket.destroy();
           } catch (e) {
-            console.error(`Failed to destroy socket ${socket.remoteAddress}:${socket.remotePort}:`, e);
+            console.error(
+              `Failed to destroy socket ${socket.remoteAddress}:${socket.remotePort}:`,
+              e,
+            );
           }
         });
 
@@ -88,52 +93,70 @@ export default function LoadingScreen({ navigation }) {
           console.log('Server closed in stopServer');
         });
 
-        await AsyncStorage.setItem('serverState', JSON.stringify({ isRunning: false }));
+        await AsyncStorage.setItem(
+          'serverState',
+          JSON.stringify({isRunning: false}),
+        );
         console.log('AsyncStorage updated');
 
         if (isMounted.current) {
-          dispatch({ type: 'STOP_SERVER' });
+          dispatch({type: 'STOP_SERVER'});
           console.log('STOP_SERVER dispatched');
           console.log('Navigating back to NewDevice');
           try {
+            hasNavigated.current = true;
             navigation.reset({
               index: 0,
-              routes: [{ name: 'NewDevice' }],
+              routes: [{name: 'NewDevice', params: {fromLoadingScreen: true}}],
             });
           } catch (navError) {
             console.error('Navigation error:', navError);
-            ToastAndroid.show('Navigation failed: ' + navError.message, ToastAndroid.LONG);
+            ToastAndroid.show(
+              'Navigation failed: ' + navError.message,
+              ToastAndroid.LONG,
+            );
           }
         }
       } else {
         console.log('No server to stop');
         if (isMounted.current) {
-          dispatch({ type: 'STOP_SERVER' });
+          dispatch({type: 'STOP_SERVER'});
           console.log('Navigating back to NewDevice');
           try {
+            hasNavigated.current = true;
             navigation.reset({
               index: 0,
-              routes: [{ name: 'NewDevice' }],
+              routes: [{name: 'NewDevice', params: {fromLoadingScreen: true}}],
             });
           } catch (navError) {
             console.error('Navigation error:', navError);
-            ToastAndroid.show('Navigation failed: ' + navError.message, ToastAndroid.LONG);
+            ToastAndroid.show(
+              'Navigation failed: ' + navError.message,
+              ToastAndroid.LONG,
+            );
           }
         }
       }
     } catch (error) {
       console.error('Error during stopServer:', error);
       if (isMounted.current) {
-        ToastAndroid.show('Error stopping server: ' + error.message, ToastAndroid.SHORT);
+        ToastAndroid.show(
+          'Error stopping server: ' + error.message,
+          ToastAndroid.SHORT,
+        );
         console.log('Navigating back to NewDevice despite error');
         try {
+          hasNavigated.current = true;
           navigation.reset({
             index: 0,
-            routes: [{ name: 'NewDevice' }],
+            routes: [{name: 'NewDevice', params: {fromLoadingScreen: true}}],
           });
         } catch (navError) {
           console.error('Navigation error:', navError);
-          ToastAndroid.show('Navigation failed: ' + navError.message, ToastAndroid.LONG);
+          ToastAndroid.show(
+            'Navigation failed: ' + navError.message,
+            ToastAndroid.LONG,
+          );
         }
       }
     } finally {
@@ -147,7 +170,7 @@ export default function LoadingScreen({ navigation }) {
       'Stop Server?',
       'Are you sure you want to stop the server?',
       [
-        { text: 'Cancel', style: 'cancel' },
+        {text: 'Cancel', style: 'cancel'},
         {
           text: 'Yes',
           onPress: async () => {
@@ -155,7 +178,7 @@ export default function LoadingScreen({ navigation }) {
           },
         },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
@@ -165,28 +188,44 @@ export default function LoadingScreen({ navigation }) {
         console.log('Back press ignored, server stopping in progress');
         return true;
       }
+      if (hasNavigated.current) {
+        console.log('Back press ignored, navigation already in progress');
+        return true;
+      }
       Alert.alert(
-        'Stop Server?',
-        'Are you sure you want to stop the server and go back?',
+        'Go Back?',
+        'Are you sure you want to go back? The server will continue running.',
         [
-          { text: 'Cancel', style: 'cancel' },
+          {text: 'Cancel', style: 'cancel'},
           {
             text: 'Yes',
-            onPress: async () => {
-              await stopServer();
+            onPress: () => {
+              console.log(
+                'Navigating back to NewDevice without stopping server',
+              );
+              hasNavigated.current = true;
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {name: 'NewDevice', params: {fromLoadingScreen: true}},
+                ],
+              });
             },
           },
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
       return true;
     };
 
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
     return () => {
       backHandler.remove();
     };
-  }, [dispatch, navigation, server]);
+  }, [navigation]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -198,41 +237,55 @@ export default function LoadingScreen({ navigation }) {
           clearTimeout(navigationTimeout.current);
         }
       };
-    }, [])
+    }, []),
   );
 
   useEffect(() => {
-    if (!isMounted.current || hasNavigated.current) return;
+    if (!isMounted.current || hasNavigated.current) {
+      return;
+    }
 
-    console.log('LoadingScreen useEffect - Server:', server ? 'active' : 'null');
+    console.log(
+      'LoadingScreen useEffect - Server:',
+      server ? 'active' : 'null',
+    );
     console.log('Connected devices:', connectedDevices.length);
 
-    if (!server) {
-      console.log('Server stopped unexpectedly, navigating to NewDevice');
-      ToastAndroid.show('Server stopped unexpectedly', ToastAndroid.SHORT);
+    const navigateWithDelay = (screen, params) => {
       hasNavigated.current = true;
-      if (navigationTimeout.current) clearTimeout(navigationTimeout.current);
+      if (navigationTimeout.current) {
+        clearTimeout(navigationTimeout.current);
+      }
       navigationTimeout.current = setTimeout(() => {
         try {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'NewDevice' }],
-          });
+          if (screen === 'NewDevice') {
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'NewDevice', params: {fromLoadingScreen: true}}],
+            });
+          } else {
+            navigation.navigate(screen, params);
+          }
         } catch (navError) {
           console.error('Navigation error:', navError);
-          ToastAndroid.show('Navigation failed: ' + navError.message, ToastAndroid.LONG);
+          ToastAndroid.show(
+            'Navigation failed: ' + navError.message,
+            ToastAndroid.LONG,
+          );
         }
-      }, 500);
+      }, 1000);
+    };
+
+    if (!server) {
+      console.log('Server stopped due to navigation, navigating to NewDevice');
+      ToastAndroid.show('Server stopped', ToastAndroid.SHORT);
+      navigateWithDelay('NewDevice');
       return;
     }
 
     if (connectedDevices.length > 0) {
       console.log('Devices connected, navigating to Control');
-      hasNavigated.current = true;
-      if (navigationTimeout.current) clearTimeout(navigationTimeout.current);
-      navigationTimeout.current = setTimeout(() => {
-        navigation.navigate('Control');
-      }, 500);
+      navigateWithDelay('Control');
     }
   }, [server, connectedDevices, navigation]);
 
@@ -240,30 +293,40 @@ export default function LoadingScreen({ navigation }) {
     <SafeAreaView style={styles.container}>
       <StatusBar backgroundColor="#000" barStyle="light-content" />
       <View style={styles.header}>
-        <View style={[styles.statusDot, { backgroundColor: server ? '#5dbe74' : '#ff4d4d' }]} />
+        <View
+          style={[
+            styles.statusDot,
+            {backgroundColor: server ? '#5dbe74' : '#ff4d4d'},
+          ]}
+        />
         <Text style={styles.statusText}>
           {server ? 'Online' : 'Server stopped'}
         </Text>
       </View>
       <View style={styles.lottieContainer}>
-      <Lottie
+        <Lottie
           style={styles.lottie}
           source={require('../screens/lottie/loading.json')}
           autoPlay
           loop
-          onError={(error) => console.error('Lottie error:', error)}
+          onError={error => console.error('Lottie error:', error)}
         />
       </View>
-      <Text style={styles.infoText}>{serverAddress.ip}:{serverAddress.port}</Text>
-      <ThemedButton name="bruce" type="primary" onPress={handleStopServer} style={styles.button}>
-      <Text style={styles.buttonText}>Stop Server</Text>
+      <Text style={styles.infoText}>
+        {serverAddress.ip}:{serverAddress.port}
+      </Text>
+      <ThemedButton
+        name="bruce"
+        type="primary"
+        onPress={handleStopServer}
+        style={styles.button}>
+        <Text style={styles.buttonText}>Stop Server</Text>
       </ThemedButton>
-        
     </SafeAreaView>
   );
 }
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -299,8 +362,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 10,
-    width: width *
-    0.9,
+    width: width * 0.9,
   },
   statusDot: {
     width: 10,
@@ -323,7 +385,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 10,
-    marginBottom: height * 0.10, 
+    marginBottom: height * 0.1,
   },
   buttonText: {
     color: '#5dbe74',

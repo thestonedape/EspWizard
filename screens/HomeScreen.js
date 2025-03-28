@@ -1,517 +1,349 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
-  StyleSheet,
   ToastAndroid,
   Dimensions,
+  StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import dgram from 'react-native-udp';
+import Animated, {
+  Easing,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withRepeat,
+} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import LinearGradient from 'react-native-linear-gradient';
-import * as Animatable from 'react-native-animatable';
 
+const {width, height} = Dimensions.get('window');
 
-const { width, height } = Dimensions.get('window');
-const API_BASE_URL = 'https://api.developer.atomberg-iot.com';
+export default function FanControlUDPScreen({navigation, route}) {
+  const selectedDeviceId = route?.params?.deviceId || 'dc54750db3b8';
+  const [fanState, setFanState] = useState({
+    power: false,
+    speed: 0,
+    sleep: false,
+    led: false,
+    fanTimer: 0,
+    fanTimerElapsedMins: 0,
+    brightness: 0,
+    cool: false,
+    warm: false,
+    color: 'Unknown',
+    isOnline: false,
+  });
 
-const API_KEY = 'jFDpKLUQQr3xv1vzelbORanNNE0b0E3w1im1dMUF';
-const REFRESH_TOKEN = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6Imdvb2dsZV8xMDM3ODE0MTg4MzYzNDk1NTI3NjkiLCJ0eXBlIjoicmVmcmVzaCIsImlzcyI6ImRldmVsb3Blci5hdG9tYmVyZy1pb3QuY29tIiwiZGV2ZWxvcGVyX2lkIjoidzZobW16ZmNpaiIsImp0aSI6ImY5ZjdiNzA4LTYyYmUtNDFjNC05NTQ1LTk5NjAwMzMyMzI2MSIsImlhdCI6MTc0MjkwMjE1NCwiZXhwIjoyMDU4MjYyMTU0fQ.sAKpC_xzkRrnude0uDoiDvYHo6dz_s0L10m5jhgJin4';
+  const rotate = useSharedValue(0);
+  const bounce = useSharedValue(1);
 
-export default function FanControlScreen({ navigation }) {
-  const [devices, setDevices] = useState([]);
-  const [fanState, setFanState] = useState(null);
-  const [selectedDeviceId, setSelectedDeviceId] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
-  const [rateLimitExceeded, setRateLimitExceeded] = useState(false);
-
-  // Store API credentials in AsyncStorage
   useEffect(() => {
-    const storeApiCredentials = async () => {
+    if (fanState.power) {
+      rotate.value = withRepeat(
+        withTiming(360, {duration: 2000, easing: Easing.linear}),
+        -1,
+        false,
+      );
+    } else {
+      rotate.value = withTiming(0, {duration: 200, easing: Easing.linear});
+    }
+  }, [fanState.power]);
+
+  const animatedRotateStyle = useAnimatedStyle(() => ({
+    transform: [{rotate: `${rotate.value}deg`}],
+  }));
+
+  const animatedBounceStyle = useAnimatedStyle(() => ({
+    transform: [{scale: bounce.value}],
+  }));
+
+  const triggerBounce = () => {
+    bounce.value = withTiming(0.9, {duration: 100}, () =>
+      withTiming(1, {duration: 100}),
+    );
+  };
+
+  useEffect(() => {
+    let udpSocket = null;
+    let isMounted = true;
+    let timeoutId = null;
+
+    const setupSocket = async () => {
       try {
-        console.log('Storing API credentials:', { API_KEY, REFRESH_TOKEN });
-        await AsyncStorage.setItem('atombergApiKey', API_KEY);
-        await AsyncStorage.setItem('atombergRefreshToken', REFRESH_TOKEN);
-        console.log('API credentials stored successfully');
+        console.log('dgram object:', dgram);
+        console.log('dgram.createSocket:', dgram.createSocket);
+        console.log('Creating UDP socket with react-native-udp...');
+        if (typeof dgram.createSocket !== 'function') {
+          throw new Error(
+            'createSocket is not a function. Check react-native-udp version and linking.',
+          );
+        }
+        udpSocket = dgram.createSocket('udp4');
+        console.log('UDP socket created:', udpSocket);
+
+        console.log('Attempting to bind to port 5625...');
+        udpSocket.bind(5625, () => {
+          console.log('UDP Socket bound to port: 5625');
+          try {
+            console.log('Setting broadcast to true...');
+            udpSocket.setBroadcast(true);
+            console.log('Broadcast set to true');
+          } catch (broadcastError) {
+            console.error('Error setting broadcast:', broadcastError);
+            if (isMounted) {
+              ToastAndroid.show(
+                'Error setting broadcast: ' + broadcastError.message,
+                ToastAndroid.LONG,
+              );
+            }
+          }
+        });
+
+        udpSocket.on('error', error => {
+          console.error('UDP Socket Error:', error);
+          if (isMounted) {
+            ToastAndroid.show(
+              'UDP Socket Error: ' + error.message,
+              ToastAndroid.LONG,
+            );
+          }
+        });
+
+        udpSocket.on('close', () => {
+          console.log('UDP socket closed');
+        });
+
+        udpSocket.on('message', (msg, rinfo) => {
+          console.log(
+            'Received UDP message:',
+            msg.toString('hex'),
+            'from',
+            rinfo.address,
+            ':',
+            rinfo.port,
+          );
+          const asciiMessage = msg
+            .toString('hex')
+            .match(/.{1,2}/g)
+            .map(hex => String.fromCharCode(parseInt(hex, 16)))
+            .join('');
+          console.log('ASCII Message:', asciiMessage);
+
+          try {
+            const parsedMessage = JSON.parse(asciiMessage);
+            if (
+              parsedMessage.device_id === selectedDeviceId &&
+              parsedMessage.state_string
+            ) {
+              const stateFields = parsedMessage.state_string.split(',');
+              const value = parseInt(stateFields[0], 10);
+
+              const newState = {
+                power: (0x10 & value) > 0,
+                led: (0x20 & value) > 0,
+                sleep: (0x80 & value) > 0,
+                speed: 0x07 & value,
+                fanTimer: Math.round((0x0f0000 & value) / 65536),
+                fanTimerElapsedMins: Math.round(
+                  ((0xff000000 & value) * 4) / 16777216,
+                ),
+                brightness: Math.round((0x7f00 & value) / 256),
+                cool: (0x08 & value) > 0,
+                warm: (0x8000 & value) > 0,
+                isOnline: true,
+              };
+              newState.color =
+                newState.cool && newState.warm
+                  ? 'Daylight'
+                  : newState.cool
+                  ? 'Cool'
+                  : newState.warm
+                  ? 'Warm'
+                  : 'Unknown';
+
+              console.log('Parsed Fan State:', newState);
+              if (isMounted) {
+                setFanState(newState);
+                // Reset the timeout since we received a message
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                  if (isMounted) {
+                    setFanState(prevState => ({...prevState, isOnline: false}));
+                    ToastAndroid.show(
+                      'Fan is offline (no messages received)',
+                      ToastAndroid.LONG,
+                    );
+                  }
+                }, 30000); // 30 seconds timeout
+              }
+            }
+          } catch (error) {
+            console.error('Error parsing UDP message:', error);
+          }
+        });
+
+        udpSocket.on('listening', () => {
+          const address = udpSocket.address();
+          console.log(
+            'Socket listening on',
+            address.address,
+            ':',
+            address.port,
+          );
+        });
+
+        // Initial timeout to set fan as offline if no messages are received
+        timeoutId = setTimeout(() => {
+          if (isMounted) {
+            setFanState(prevState => ({...prevState, isOnline: false}));
+            ToastAndroid.show(
+              'Fan is offline (no messages received)',
+              ToastAndroid.LONG,
+            );
+          }
+        }, 30000); // 30 seconds timeout
       } catch (error) {
-        console.error('Error storing API credentials:', error);
-        ToastAndroid.show('Failed to store API credentials', ToastAndroid.SHORT);
+        console.error('Failed to set up UDP socket:', error);
+        if (isMounted) {
+          ToastAndroid.show(
+            'Failed to set up UDP socket: ' + error.message,
+            ToastAndroid.LONG,
+          );
+        }
+        if (udpSocket) {
+          try {
+            console.log('Closing UDP socket due to setup failure...');
+            udpSocket.close();
+          } catch (closeError) {
+            console.error(
+              'Error closing UDP socket after setup failure:',
+              closeError,
+            );
+          }
+        }
       }
     };
-    storeApiCredentials();
-  }, []);
 
-  const getApiCredentials = async () => {
-    try {
-      const apiKey = await AsyncStorage.getItem('atombergApiKey');
-      const refreshToken = await AsyncStorage.getItem('atombergRefreshToken');
-      console.log('Retrieved API credentials:', { apiKey, refreshToken });
-      return { apiKey, refreshToken };
-    } catch (error) {
-      console.error('Error retrieving API credentials:', error);
-      return { apiKey: null, refreshToken: null };
-    }
-  };
+    setupSocket();
 
-  const fetchAccessToken = async () => {
-    const { apiKey, refreshToken } = await getApiCredentials();
-    console.log('Fetching access token with credentials:', { apiKey, refreshToken });
-
-    if (!apiKey || !refreshToken) {
-      console.error('API key or refresh token is missing');
-      throw new Error('API key or refresh token not found');
-    }
-
-    try {
-      console.log('Making API request to get_access_token');
-      const response = await axios.get(`${API_BASE_URL}/v1/get_access_token`, {
-        headers: {
-          'x-api-key': apiKey,
-          Authorization: `Bearer ${refreshToken}`,
-        },
-      });
-      console.log('Get access token response:', response.data);
-
-      const newAccessToken = response.data.message?.access_token;
-      console.log('Extracted access token:', newAccessToken);
-
-      if (!newAccessToken) {
-        console.error('Access token is undefined in the response');
-        throw new Error('Access token not found in response');
-      }
-
-      await AsyncStorage.setItem('atombergAccessToken', String(newAccessToken));
-      await AsyncStorage.setItem('accessTokenTimestamp', Date.now().toString());
-      console.log('Access token stored successfully:', newAccessToken);
-      setAccessToken(newAccessToken);
-      return newAccessToken;
-    } catch (error) {
-      console.error('Error fetching access token:', error.response?.data || error.message);
-      ToastAndroid.show(
-        'Failed to fetch access token: ' + (error.response?.data?.message || error.message),
-        ToastAndroid.LONG
-      );
-      throw error;
-    }
-  };
-
-  const getValidAccessToken = async () => {
-    const storedAccessToken = await AsyncStorage.getItem('atombergAccessToken');
-    const timestamp = await AsyncStorage.getItem('accessTokenTimestamp');
-    console.log('Stored access token and timestamp:', { storedAccessToken, timestamp });
-
-    const currentTime = Date.now();
-    const tokenAge = timestamp ? (currentTime - parseInt(timestamp)) / 1000 : Infinity;
-    console.log('Token age (seconds):', tokenAge);
-
-    if (!storedAccessToken || tokenAge > 86400) {
-      console.log('Access token is missing or expired, fetching new token');
-      return await fetchAccessToken();
-    }
-    console.log('Using stored access token:', storedAccessToken);
-    setAccessToken(storedAccessToken);
-    return storedAccessToken;
-  };
-
-  const fetchDevices = async () => {
-    try {
-      console.log('Fetching devices');
-      const token = await getValidAccessToken();
-      const { apiKey } = await getApiCredentials();
-      console.log('Using access token for device fetch:', token);
-      const response = await axios.get(`${API_BASE_URL}/v1/get_list_of_devices`, {
-        headers: {
-          'x-api-key': apiKey,
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Get list of devices response:', response.data);
-      const deviceList = response.data.message?.devices_list || [];
-      console.log('Device list:', deviceList);
-  
-      setDevices(deviceList);
-  
-      const fanModels = ['renesa', 'aris', 'efficio', 'mist', 'studio'];
-      const fanDevice = deviceList.find((device) =>
-        fanModels.includes(device.model?.toLowerCase())
-      );
-  
-      if (fanDevice) {
-        console.log('Selected fan device:', fanDevice);
-        setSelectedDeviceId(fanDevice.device_id);
-      } else {
-        console.log('No fan device found in the device list');
-      }
-      setRateLimitExceeded(false); // Reset rate limit flag if the request succeeds
-    } catch (error) {
-      console.error('Error fetching devices:', error.response?.data || error.message);
-      ToastAndroid.show('Failed to fetch devices', ToastAndroid.SHORT);
-      if (error.response?.data?.message === 'Limit Exceeded') {
-        setRateLimitExceeded(true); // Set rate limit flag
-      }
-    }
-  };
-
-  const fetchFanState = async () => {
-    if (!selectedDeviceId) {
-      console.log('No selected device ID, skipping fetchFanState');
-      return;
-    }
-    try {
-      console.log('Fetching fan state for device ID:', selectedDeviceId);
-      const token = await getValidAccessToken();
-      const { apiKey } = await getApiCredentials();
-      const response = await axios.get(`${API_BASE_URL}/v1/get_device_state`, {
-        params: { device_id: selectedDeviceId },
-        headers: {
-          'x-api-key': apiKey,
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('Get device state response:', response.data);
-      const deviceState = response.data.message.device_state[0];
-      console.log('Device state:', deviceState);
-      setFanState(deviceState);
-      setRateLimitExceeded(false);
-    } catch (error) {
-      console.error('Error fetching fan state:', error.response?.data || error.message);
-      ToastAndroid.show('Failed to fetch fan state', ToastAndroid.SHORT);
-      if (error.response?.data?.message === 'Limit Exceeded') {
-        setRateLimitExceeded(true);
-      }
-    }
-  };
-
-  const sendCommand = async (command) => {
-    if (!selectedDeviceId) {
-      console.log('No selected device ID, cannot send command');
-      ToastAndroid.show('No fan selected', ToastAndroid.SHORT);
-      return;
-    }
-    try {
-      console.log('Sending command:', command);
-      const token = await getValidAccessToken();
-      const { apiKey } = await getApiCredentials();
-      const response = await axios.post(
-        `${API_BASE_URL}/v1/send_command`,
-        {
-          device_id: selectedDeviceId,
-          command,
-        },
-        {
-          headers: {
-            'x-api-key': apiKey,
-            Authorization: `Bearer ${token}`,
-          },
+    return () => {
+      console.log('Unmounting FanControlUDPScreen, cleaning up UDP socket...');
+      isMounted = false;
+      clearTimeout(timeoutId);
+      if (udpSocket) {
+        try {
+          udpSocket.close();
+          console.log('UDP socket closed during cleanup');
+        } catch (closeError) {
+          console.error('Error closing UDP socket during cleanup:', closeError);
         }
-      );
-      console.log('Send command response:', response.data);
-      ToastAndroid.show('Command sent successfully', ToastAndroid.SHORT);
-      await fetchFanState();
-    } catch (error) {
-      console.error('Error sending command:', error.response?.data || error.message);
-      ToastAndroid.show('Failed to send command: ' + (error.response?.data?.message || error.message), ToastAndroid.SHORT);
-    }
-  };
-
-  useEffect(() => {
-    console.log('FanControlScreen mounted, fetching devices');
-    fetchDevices();
-  }, []);
-
-  useEffect(() => {
-    if (selectedDeviceId) {
-      console.log('Selected device ID changed, fetching fan state');
-      fetchFanState();
-    }
+      }
+    };
   }, [selectedDeviceId]);
 
   return (
-        <SafeAreaView style={styles.container}>
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-              <Icon name="arrow-left" size={width * 0.06} color="#EEE" />
-            </TouchableOpacity>
-            <Text style={styles.title}>Fan Control</Text>
-            <TouchableOpacity onPress={fetchDevices} style={styles.refreshButton}>
-              <Icon name="sync" size={width * 0.06} color="#EEE" />
-            </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity
+          onPress={() => {
+            if (navigation && typeof navigation.goBack === 'function') {
+              navigation.goBack();
+            } else {
+              ToastAndroid.show('Cannot go back', ToastAndroid.SHORT);
+            }
+          }}
+          style={styles.backButton}>
+          <Icon name="arrow-left" size={width * 0.06} color="#EEE" />
+        </TouchableOpacity>
+        <Text style={styles.title}>Fan Control (UDP)</Text>
+      </View>
+
+      <Animated.View style={[styles.statusCard, {opacity: 1}]}>
+        <View style={styles.statusRow}>
+          <Icon
+            name="wifi"
+            size={width * 0.05}
+            color={fanState.isOnline ? '#5dbe74' : '#ff4d4d'}
+            style={styles.statusIcon}
+          />
+          <Text style={styles.statusText}>
+            Fan is {fanState.isOnline ? 'Online' : 'Offline'}
+          </Text>
+        </View>
+        <View style={styles.statusRow}>
+          <Icon
+            name="fan"
+            size={width * 0.05}
+            color={fanState.power ? '#5dbe74' : '#ff4d4d'}
+            style={styles.statusIcon}
+          />
+          <Text style={styles.statusText}>
+            Fan is {fanState.power ? 'ON' : 'OFF'}
+          </Text>
+        </View>
+      </Animated.View>
+
+      <Animated.View style={[styles.speedContainer, {transform: [{scale: 1}]}]}>
+        <LinearGradient
+          colors={['#5dbe74', '#3d8b4f']}
+          style={styles.speedCircle}>
+          <Animated.View style={[styles.fanIconContainer, animatedRotateStyle]}>
+            <Icon name="fan" size={width * 0.12} color="#fff" />
+          </Animated.View>
+          <Text style={styles.speedText}>{fanState.speed || 'N/A'}</Text>
+          <Text style={styles.speedLabel}>Speed</Text>
+        </LinearGradient>
+      </Animated.View>
+
+      <View style={styles.infoContainer}>
+        <View style={styles.infoRow}>
+          <Icon
+            name="moon"
+            size={width * 0.04}
+            color="#fff"
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText}>
+            Sleep Mode: {fanState.sleep ? 'ON' : 'OFF'}
+          </Text>
+        </View>
+        <View style={styles.infoRow}>
+          <Icon
+            name="clock"
+            size={width * 0.04}
+            color="#fff"
+            style={styles.infoIcon}
+          />
+          <Text style={styles.infoText}>
+            Timer: {fanState.fanTimer || 0} hours
+          </Text>
+        </View>
+        {fanState.brightness > 0 && (
+          <View style={styles.infoRow}>
+            <Icon
+              name="lightbulb"
+              size={width * 0.04}
+              color="#fff"
+              style={styles.infoIcon}
+            />
+            <Text style={styles.infoText}>
+              Brightness: {fanState.brightness}%, Color: {fanState.color}
+            </Text>
           </View>
-      
-          {rateLimitExceeded ? (
-            <View style={styles.errorContainer}>
-              <Icon name="exclamation-triangle" size={width * 0.1} color="#ff4d4d" />
-              <Text style={styles.errorText}>
-                API Rate Limit Exceeded. Please wait until the limit resets (usually 24 hours) or contact Atomberg support.
-              </Text>
-            </View>
-          ) : selectedDeviceId ? (
-            fanState ? (
-              <>
-                {/* Status Card */}
-                <Animatable.View animation="fadeInDown" style={styles.statusCard}>
-                  <View style={styles.statusRow}>
-                    <Icon
-                      name="wifi"
-                      size={width * 0.05}
-                      color={fanState.is_online ? '#5dbe74' : '#ff4d4d'}
-                      style={styles.statusIcon}
-                    />
-                    <Text style={styles.statusText}>
-                      Fan is {fanState.is_online ? 'Online' : 'Offline'}
-                    </Text>
-                  </View>
-                  <View style={styles.statusRow}>
-                    <Icon
-                      name="fan"
-                      size={width * 0.05}
-                      color={fanState.power ? '#5dbe74' : '#ff4d4d'}
-                      style={styles.statusIcon}
-                    />
-                    <Text style={styles.statusText}>
-                      Fan is {fanState.power ? 'ON' : 'OFF'}
-                    </Text>
-                  </View>
-                </Animatable.View>
-      
-                {/* Speed Display */}
-                <Animatable.View animation="zoomIn" style={styles.speedContainer}>
-                  <LinearGradient
-                    colors={['#5dbe74', '#3d8b4f']}
-                    style={styles.speedCircle}
-                  >
-                    <Animatable.View
-                      animation={fanState.power ? 'rotate' : null}
-                      iterationCount="infinite"
-                      duration={2000}
-                      style={styles.fanIconContainer}
-                    >
-                      <Icon name="fan" size={width * 0.12} color="#fff" />
-                    </Animatable.View>
-                    <Text style={styles.speedText}>
-                      {fanState.last_recorded_speed || 'N/A'}
-                    </Text>
-                    <Text style={styles.speedLabel}>Speed</Text>
-                  </LinearGradient>
-                </Animatable.View>
-      
-                {/* Additional Info */}
-                <View style={styles.infoContainer}>
-                  <View style={styles.infoRow}>
-                    <Icon name="moon" size={width * 0.04} color="#fff" style={styles.infoIcon} />
-                    <Text style={styles.infoText}>
-                      Sleep Mode: {fanState.sleep_mode ? 'ON' : 'OFF'}
-                    </Text>
-                  </View>
-                  <View style={styles.infoRow}>
-                    <Icon name="clock" size={width * 0.04} color="#fff" style={styles.infoIcon} />
-                    <Text style={styles.infoText}>
-                      Timer: {fanState.timer_hours || 0} hours
-                    </Text>
-                  </View>
-                </View>
-      
-                {/* Control Buttons */}
-                <View style={styles.controlContainer}>
-                  {/* Power Button */}
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        !fanState.is_online && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ power: !fanState.power })}
-                      disabled={!fanState.is_online}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online
-                            ? fanState.power
-                              ? ['#ff4d4d', '#cc3a3a']
-                              : ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon
-                          name="power-off"
-                          size={width * 0.06}
-                          color="#fff"
-                        />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>
-                      {fanState.power ? 'Turn OFF' : 'Turn ON'}
-                    </Text>
-                  </Animatable.View>
-      
-                  {/* Speed Buttons */}
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        (!fanState.is_online || !fanState.power || fanState.last_recorded_speed <= 1) && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ speedDelta: -1 })}
-                      disabled={!fanState.is_online || !fanState.power || fanState.last_recorded_speed <= 1}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online && fanState.power && fanState.last_recorded_speed > 1
-                            ? ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon name="minus" size={width * 0.06} color="#fff" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>Speed -</Text>
-                  </Animatable.View>
-      
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        (!fanState.is_online || !fanState.power || fanState.last_recorded_speed >= 6) && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ speedDelta: 1 })}
-                      disabled={!fanState.is_online || !fanState.power || fanState.last_recorded_speed >= 6}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online && fanState.power && fanState.last_recorded_speed < 6
-                            ? ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon name="plus" size={width * 0.06} color="#fff" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>Speed +</Text>
-                  </Animatable.View>
-      
-                  {/* Timer Buttons */}
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        (!fanState.is_online || !fanState.power) && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ timer: 0 })}
-                      disabled={!fanState.is_online || !fanState.power}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online && fanState.power
-                            ? ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon name="times" size={width * 0.06} color="#fff" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>Clear Timer</Text>
-                  </Animatable.View>
-      
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        (!fanState.is_online || !fanState.power) && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ timer: 1 })}
-                      disabled={!fanState.is_online || !fanState.power}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online && fanState.power
-                            ? ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon name="clock" size={width * 0.06} color="#fff" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>Set 1h Timer</Text>
-                  </Animatable.View>
-      
-                  {/* Sleep Mode and Boost Mode */}
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        (!fanState.is_online || !fanState.power) && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ sleep: !fanState.sleep_mode })}
-                      disabled={!fanState.is_online || !fanState.power}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online && fanState.power
-                            ? fanState.sleep_mode
-                              ? ['#ff4d4d', '#cc3a3a']
-                              : ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon name="moon" size={width * 0.06} color="#fff" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>
-                      Sleep Mode {fanState.sleep_mode ? 'OFF' : 'ON'}
-                    </Text>
-                  </Animatable.View>
-      
-                  <Animatable.View animation="bounceIn" style={styles.buttonWrapper}>
-                    <TouchableOpacity
-                      style={[
-                        styles.controlButton,
-                        (!fanState.is_online || !fanState.power) && styles.buttonDisabled,
-                      ]}
-                      onPress={() => sendCommand({ speed: 6 })}
-                      disabled={!fanState.is_online || !fanState.power}
-                    >
-                      <LinearGradient
-                        colors={
-                          fanState.is_online && fanState.power
-                            ? ['#5dbe74', '#3d8b4f']
-                            : ['#888', '#666']
-                        }
-                        style={styles.buttonGradient}
-                      >
-                        <Icon name="bolt" size={width * 0.06} color="#fff" />
-                      </LinearGradient>
-                    </TouchableOpacity>
-                    <Text style={styles.buttonLabel}>Boost Mode</Text>
-                  </Animatable.View>
-                </View>
-              </>
-            ) : (
-              <View style={styles.errorContainer}>
-                <Icon name="exclamation-circle" size={width * 0.1} color="#ff4d4d" />
-                <Text style={styles.errorText}>
-                  Unable to fetch fan state. Tap the refresh button to try again.
-                </Text>
-              </View>
-            )
-          ) : (
-            <View style={styles.errorContainer}>
-              <Icon name="exclamation-circle" size={width * 0.1} color="#ff4d4d" />
-              <Text style={styles.errorText}>
-                Unable to fetch devices. Tap the refresh button to try again.
-              </Text>
-            </View>
-          )}
-        </SafeAreaView>
+        )}
+      </View>
+
+      <View style={styles.noteContainer}>
+        <Text style={styles.noteText}>
+          Note: Control buttons are disabled as the HTTP API is unavailable.
+          This screen displays the fan's state received via UDP broadcasts on
+          port 5625.
+        </Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -533,28 +365,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
   },
-  refreshButton: {
-    position: 'absolute',
-    right: 20,
-  },
   title: {
     fontSize: width * 0.08,
-    fontFamily: 'NeueMetana-Bold',
     color: '#EEE',
     textAlign: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  errorText: {
-    color: '#fff',
-    fontSize: width * 0.045,
-    fontFamily: 'Gilroy-Medium',
-    textAlign: 'center',
-    marginTop: 10,
   },
   statusCard: {
     backgroundColor: '#1a1a1a',
@@ -563,7 +377,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     width: '90%',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
@@ -579,7 +393,6 @@ const styles = StyleSheet.create({
   statusText: {
     color: '#fff',
     fontSize: width * 0.045,
-    fontFamily: 'Gilroy-Medium',
   },
   speedContainer: {
     marginVertical: 20,
@@ -592,7 +405,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#5dbe74',
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: {width: 0, height: 0},
     shadowOpacity: 0.5,
     shadowRadius: 10,
     elevation: 10,
@@ -603,12 +416,10 @@ const styles = StyleSheet.create({
   speedText: {
     color: '#fff',
     fontSize: width * 0.1,
-    fontFamily: 'Gilroy-ExtraBold',
   },
   speedLabel: {
     color: '#fff',
     fontSize: width * 0.04,
-    fontFamily: 'Gilroy-Medium',
     marginTop: 5,
   },
   infoContainer: {
@@ -616,10 +427,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '90%',
     marginVertical: 10,
+    flexWrap: 'wrap',
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginVertical: 5,
   },
   infoIcon: {
     marginRight: 8,
@@ -627,48 +440,17 @@ const styles = StyleSheet.create({
   infoText: {
     color: '#fff',
     fontSize: width * 0.04,
-    fontFamily: 'Gilroy-Medium',
   },
-  controlContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
+  noteContainer: {
     width: '90%',
+    padding: 15,
+    backgroundColor: '#1a1a1a',
+    borderRadius: 10,
     marginTop: 20,
   },
-  buttonWrapper: {
-    alignItems: 'center',
-    marginVertical: 10,
-    width: '33%',
-  },
-  controlButton: {
-    width: width * 0.18,
-    height: width * 0.18,
-    borderRadius: width * 0.09,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  buttonGradient: {
-    width: '100%',
-    height: '100%',
-    borderRadius: width * 0.09,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonDisabled: {
-    shadowOpacity: 0,
-    elevation: 0,
-  },
-  buttonLabel: {
+  noteText: {
     color: '#fff',
-    fontSize: width * 0.035,
-    fontFamily: 'Gilroy-Medium',
-    marginTop: 5,
+    fontSize: width * 0.04,
     textAlign: 'center',
   },
 });

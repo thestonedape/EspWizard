@@ -1,4 +1,4 @@
-import { createStore } from 'redux';
+import {createStore} from 'redux';
 
 const initialState = {
   server: null,
@@ -10,17 +10,27 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_SERVER':
       console.log('SET_SERVER: Server set');
-      return { ...state, server: action.payload };
+      return {...state, server: action.payload};
 
     case 'ADD_CONNECTED_DEVICE':
-      console.log('ADD_CONNECTED_DEVICE:', { ip: action.payload.ip, port: action.payload.port });
+      console.log('ADD_CONNECTED_DEVICE:', {
+        ip: action.payload.ip,
+        port: action.payload.port,
+      });
       const exists = state.connectedDevices.some(
-        (device) => device.ip === action.payload.ip && device.port === action.payload.port
+        device =>
+          device.ip === action.payload.ip &&
+          device.port === action.payload.port,
       );
-      if (exists) return state;
+      if (exists) {
+        return state;
+      }
       return {
         ...state,
-        connectedDevices: [...state.connectedDevices, { ip: action.payload.ip, port: action.payload.port, messages: [] }],
+        connectedDevices: [
+          ...state.connectedDevices,
+          {ip: action.payload.ip, port: action.payload.port, messages: []},
+        ],
         sockets: [...state.sockets, action.payload.socket],
       };
 
@@ -28,10 +38,13 @@ const reducer = (state = initialState, action) => {
       console.log('ADD_MESSAGE:', action.payload);
       return {
         ...state,
-        connectedDevices: state.connectedDevices.map((device) =>
+        connectedDevices: state.connectedDevices.map(device =>
           device.ip === action.payload.ip && device.port === action.payload.port
-            ? { ...device, messages: [...(device.messages || []), action.payload.message] }
-            : device
+            ? {
+                ...device,
+                messages: [...(device.messages || []), action.payload.message],
+              }
+            : device,
         ),
       };
 
@@ -40,16 +53,24 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         connectedDevices: state.connectedDevices.filter(
-          (device) => !(device.ip === action.payload.ip && device.port === action.payload.port)
+          device =>
+            !(
+              device.ip === action.payload.ip &&
+              device.port === action.payload.port
+            ),
         ),
         sockets: state.sockets.filter(
-          (socket) => !(socket.remoteAddress === action.payload.ip && socket.remotePort === action.payload.port)
+          socket =>
+            !(
+              socket.remoteAddress === action.payload.ip &&
+              socket.remotePort === action.payload.port
+            ),
         ),
       };
 
     case 'STOP_SERVER':
       console.log('STOP_SERVER');
-      return { ...state, server: null, connectedDevices: [], sockets: [] };
+      return {...state, server: null, connectedDevices: [], sockets: []};
 
     default:
       return state;

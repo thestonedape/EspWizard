@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useImperativeHandle } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import React, {useCallback, useEffect, useImperativeHandle} from 'react';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
+import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
   Extrapolate,
   interpolate,
@@ -10,36 +10,33 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT + 50;
 
-const BottomSheet = React.forwardRef(({ children }, ref) => {
+const BottomSheet = React.forwardRef(({children}, ref) => {
   const translateY = useSharedValue(0);
   const active = useSharedValue(false);
 
-  const scrollTo = useCallback((destination) => {
+  const scrollTo = useCallback(destination => {
     'worklet';
     active.value = destination !== 0;
 
-    translateY.value = withSpring(destination, { damping: 50 });
+    translateY.value = withSpring(destination, {damping: 50});
   }, []);
 
   const isActive = useCallback(() => {
     return active.value;
   }, []);
 
-  useImperativeHandle(ref, () => ({ scrollTo, isActive }), [
-    scrollTo,
-    isActive,
-  ]);
+  useImperativeHandle(ref, () => ({scrollTo, isActive}), [scrollTo, isActive]);
 
-  const context = useSharedValue({ y: 0 });
+  const context = useSharedValue({y: 0});
   const gesture = Gesture.Pan()
     .onStart(() => {
-      context.value = { y: translateY.value };
+      context.value = {y: translateY.value};
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       translateY.value = event.translationY + context.value.y;
       translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y);
     })
@@ -56,12 +53,12 @@ const BottomSheet = React.forwardRef(({ children }, ref) => {
       translateY.value,
       [MAX_TRANSLATE_Y + 50, MAX_TRANSLATE_Y],
       [25, 5],
-      Extrapolate.CLAMP
+      Extrapolate.CLAMP,
     );
 
     return {
       borderRadius,
-      transform: [{ translateY: translateY.value }],
+      transform: [{translateY: translateY.value}],
     };
   });
 
