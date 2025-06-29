@@ -1,0 +1,45 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/Cirka-Bold.otf",
+      "sha1": "c8cf5578b07a7e3b5984e1c7a15e1a3dc3194aa9"
+    },
+    {
+      "path": "assets/fonts/Cirka-Light.otf",
+      "sha1": "02dd0045f9ccd4a9909f0b05e13b212c4c585746"
+    },
+    {
+      "path": "assets/fonts/Cirka-Variable.ttf",
+      "sha1": "84c46dbb96ba068f03be10dac63cc2d82b856977"
+    },
+    {
+      "path": "assets/fonts/druk-wide-bold.ttf",
+      "sha1": "32cf5241179426fae2d21bd976e48387e9217c4b"
+    },
+    {
+      "path": "assets/fonts/Gilroy-ExtraBold.otf",
+      "sha1": "ebd136c81542a067830d5852b785d069403c4a15"
+    },
+    {
+      "path": "assets/fonts/Gilroy-Light.otf",
+      "sha1": "78410fd9e800f48e3ffa140497ba2d65ac169d22"
+    },
+    {
+      "path": "assets/fonts/MontserratAlt1-ExtraLight.ttf",
+      "sha1": "20cd2b6ff22aa4f896e8db280a917a4335d45959"
+    },
+    {
+      "path": "assets/fonts/MontserratAlt1-Light.ttf",
+      "sha1": "cd0ff1b2b91518257e4b93e8152baecd756b6fd9"
+    },
+    {
+      "path": "assets/fonts/MontserratAlt1-Thin.ttf",
+      "sha1": "5286219df4cf478f4c7ff91ab29ccd9d2bb44aa6"
+    },
+    {
+      "path": "assets/fonts/NeueMetana-Bold.otf",
+      "sha1": "be9c48fe2d4ac1938bac0fc3cf440f9db43ddbc4"
+    }
+  ]
+}
