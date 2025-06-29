@@ -14,7 +14,7 @@
 <br>
 <div  align="center"> 
    
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/1.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/1.jpg">
   <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/4.jpg">
   <br>
   <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/2.jpg">
