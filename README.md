@@ -14,11 +14,11 @@
 <br>
 <div  align="center"> 
    
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/1.jpg">
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/4.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/1.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/4.jpg">
   <br>
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/2.jpg">
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/3.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/2.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/3.jpg">
        
   </div>
 <br>
@@ -29,25 +29,26 @@ The ESP Controller App is a mobile application that allows you to control your E
 
 
 
-## Features
+Features
 
-- Easy to use interface for controlling ESP devices
-- Connects to ESP devices using Wi-Fi
-- Supprts multiple ESP devices
-- Sends commands to ESP devices via UDP
+- Intuitive interface for controlling ESP devices
+- Connects to multiple ESP devices using Wi-Fi
+- Supports multiple TCP clients for simultaneous yet independent device control
+- Sends commands to ESP devices via TCP sockets
 - Displays sensor data from ESP devices in real-time
-- Customizable commands support for new devices
+- Customizable controller buttons and controls, allowing users to create their own control layouts
+- Independent control for each connected ESP device
+
 <br>
-  
- ## Getting Started
+
+Getting Started
 
 - Connect your ESP device to a Wi-Fi network and obtain its IP address.
 - Install the ESP Controller App.
-- Open the app and tap the "search" button to add a new device.
-- Tap "Modes" to select the modes.
-- Open the control interface for the device.
-- Use the interface to send commands to the ESP device.
- 
+- Open the app and tap the "search" button to discover and add a new device.
+- Tap "Modes" to select control modes or customize your control interface.
+- Open the control interface for a specific device.
+- Use the customizable interface to send commands to the ESP device.
  
  ## Troubleshooting
 
@@ -96,34 +97,3 @@ To run the app on an emulator, open a new terminal window, navigate to the proje
   </div>
  <br>
 
-
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-
-# Getting Started
-@@ -72,26 +171,3 @@ When you want to forcefully reload, for example to reset the state of your app,
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
