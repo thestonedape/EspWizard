@@ -1,122 +1,129 @@
-<p align="center">
-  <img border="0" height="50" src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/download.png">
-  <h1 align="center"><b>ESP Wizard</b></h1>
-</p>
+<div align = "center">
+<img border="0" height='50' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/download.png">
+<h1 align ="center"><b>ESP Wizard </b></h1>
 
-<p align="center"> 
-  <img src="https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB">
-  <img src="https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black">
-</p>
+ </div>
+
+<div align = "center"> 
+
+<img src ="https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB"> </img>
+<img src ="https://img.shields.io/badge/firebase-ffca28?style=for-the-badge&logo=firebase&logoColor=black"> </img>
+
+</div>
 
 <br>
-
-<p align="center"> 
-  <img border="0" height="260" src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/1.jpg">
-  <img border="0" height="260" src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/4.jpg">
+<div  align="center"> 
+   
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/1.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/4.jpg">
   <br>
-  <img border="0" height="260" src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/2.jpg">
-  <img border="0" height="260" src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/3.jpg">
-</p>
-
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/2.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/master/assets/images/3.jpg">
+       
+  </div>
 <br>
 
-Context
-The ESP Controller App is a mobile application that allows you to control your ESP devices from your smartphone or tablet. With this app, you can easily connect to multiple ESP devices and send commands to them independently, such as turning on or off an LED, controlling motors, changing the color of an RGB light, or reading sensor data.
-
+# Context
+The ESP Controller App is a mobile application that allows you to control your ESP devices from your smartphone or tablet. With this app, you can easily connect to your ESP devices and send commands to them, such as turning on or off an LED, Motors, changing the color of an RGB light, or reading sensor data.
 <br>
 
-Features
 
-- Intuitive interface for controlling ESP devices
-- Connects to multiple ESP devices using Wi-Fi
-- Supports multiple TCP clients for simultaneous yet independent device control
-- Sends commands to ESP devices via TCP sockets
+
+## Features
+
+- Easy to use interface for controlling ESP devices
+- Connects to ESP devices using Wi-Fi
+- Supprts multiple ESP devices
+- Sends commands to ESP devices via UDP
 - Displays sensor data from ESP devices in real-time
-- Customizable controller buttons and controls, allowing users to create their own control layouts
-- Independent control for each connected ESP device
-
+- Customizable commands support for new devices
 <br>
-
-Getting Started
+  
+ ## Getting Started
 
 - Connect your ESP device to a Wi-Fi network and obtain its IP address.
 - Install the ESP Controller App.
-- Open the app and tap the "search" button to discover and add a new device.
-- Tap "Modes" to select control modes or customize your control interface.
-- Open the control interface for a specific device.
-- Use the customizable interface to send commands to the ESP device.
-
-Troubleshooting
+- Open the app and tap the "search" button to add a new device.
+- Tap "Modes" to select the modes.
+- Open the control interface for the device.
+- Use the interface to send commands to the ESP device.
+ 
+ 
+ ## Troubleshooting
 
 If you are unable to discover the ESP devices on the network, you may need to check the following:
 
 - Ensure that the ESP devices are connected to the same Wi-Fi network as your mobile device.
 - Check that the ESP devices are powered on and connected to the network.
-- Verify that the TCP configuration (e.g., IP address and port) used in the app matches the network configuration of your Wi-Fi network.
+- Verify that the broadcast IP address used in the app matches the network configuration of your Wi-Fi network.
+ <br>
 
-<br>
+### Steps to run it
+  <div>
+   Step 1: Clone the repository
+Firstly, you will need to clone the repository that contains the React Native project onto your local machine. You can do this by running the following command in your terminal:
+   
+```
+   git clone <repository URL>
+```
+   </div>
+  <br>
+  <div>
+   Step 2: Install dependencies
+Once you have cloned the repository, navigate to the project directory and install the required dependencies by running the following command:
 
-This is a new [React Native](https://reactnative.dev) project, bootstrapped using [@react-native-community/cli](https://github.com/react-native-community/cli).
+```
+   npm install
+```
+  </div>
+  <br>
+  <div>
+   Step 3: Run the project
+After the installation of dependencies is completed, you can start the project by running the following command:
+   
+```
+   npm start
+```
+  </div>
+  <br>
+  <div>
+   Step 4: Run the app on an emulator or a physical device
+To run the app on an emulator, open a new terminal window, navigate to the project directory, and run the following command:
+   
+```
+   npx react-native run-android
+```
+  </div>
+ <br>
 
-Development Setup
 
-> Note: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-Step 1: Start Metro
+# Getting Started
+@@ -72,26 +171,3 @@ When you want to forcefully reload, for example to reset the state of your app,
 
-First, you will need to run Metro, the JavaScript build tool for React Native.
+- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
+- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Congratulations! :tada:
 
-# Using npm
-npm start
+You've successfully run and modified your React Native App. :partying_face:
 
-# OR using Yarn
-yarn start
+### Now what?
 
-Step 2: Build and run your app
+- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
+- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+# Troubleshooting
 
-Android
+If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
 
-# Using npm
-npm run android
+# Learn More
 
-# OR using Yarn
-yarn android
+To learn more about React Native, take a look at the following resources:
 
-iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native dependencies).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-bundle install
-
-Then, and every time you update your native dependencies, run:
-
-bundle exec pod install
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- Android: Press the R key twice or select "Reload" from the Dev Menu, accessed via Ctrl + M (Windows/Linux) or Cmd ⌘ + M (macOS).
-- iOS: Press R in iOS Simulator.
+- [React Native Website](https://reactnative.dev) - learn more about React Native.
+- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
+- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
+- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
+- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
