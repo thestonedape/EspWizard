@@ -14,7 +14,7 @@
 <br>
 <div  align="center"> 
    
-  <img border="0" height='550' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/Image2.png">
+  <img border="0" height='550' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/mockup_7.png">
   <br>
   <img border="0" height='550' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/image.png">
        
