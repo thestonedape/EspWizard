@@ -14,11 +14,9 @@
 <br>
 <div  align="center"> 
    
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/1.jpg">
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/4.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/Image2.png">
   <br>
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/2.jpg">
-  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/3.jpg">
+  <img border="0" height='260' src="https://github.com/thestonedape/EspWizard/blob/main/assets/images/image.png">
        
   </div>
 <br>
